@@ -1,9 +1,0 @@
-node_modules/
-.vercel/
-.tanstack/
-.output/
-dist/
-.env
-.env.*
-*.keystore
-*.jks
