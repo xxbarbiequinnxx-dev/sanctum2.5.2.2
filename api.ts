@@ -70,11 +70,11 @@ var KIND = z.enum([
 	"journal",
 	"note",
 	"catalog",
-	"wishlist",
 	"talk",
 	"roleplay",
 	"challenge",
-	"playbook"
+	"playbook",
+	"calendar"
 ]);
 var CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 var EMPTY_COUNTS = {
@@ -87,11 +87,11 @@ var EMPTY_COUNTS = {
 	journal: 0,
 	note: 0,
 	catalog: 0,
-	wishlist: 0,
 	talk: 0,
 	roleplay: 0,
 	challenge: 0,
-	playbook: 0
+	playbook: 0,
+	calendar: 0
 };
 function makeCode() {
 	let s = "";
@@ -1252,7 +1252,7 @@ export const getDashboard = createServerFn({ method: "GET" }).middleware([authMi
              subcategory, assigned_to, intensity, photo_data, meta, created_at, updated_at, completed_at, completed_on, sort_order
       from entries
       where bond_id = ${profile.bond_id}
-        and kind in ('task','rabbit','challenge','punishment','reward','roleplay','game','scene')
+        and kind in ('task','rabbit','challenge','punishment','reward','roleplay','game','scene','calendar')
         and status <> 'archived'
       order by created_at desc
     `;
@@ -1266,6 +1266,7 @@ export const getDashboard = createServerFn({ method: "GET" }).middleware([authMi
 		training: sortNamed(trainingRows.map(mapEntry).filter((item) => item.status !== "archived" && item.effectiveStatus !== "archived")),
 		archived: sortNamed(mapped.filter((item) => item.status === "archived" || item.effectiveStatus === "archived")),
 		timed: timedRows.map(mapEntry).filter((item) => item.status !== "archived" && item.effectiveStatus !== "archived"),
+		calendar: timedRows.map(mapEntry).filter((item) => item.kind === "calendar" && item.status !== "archived" && item.effectiveStatus !== "archived"),
 		counts,
 		points
 	};
@@ -1572,7 +1573,6 @@ function mergeCategories(kind, custom) {
 	for (const item of KINDS[kind].categories ?? []) {
 		const row = bySlug.get(item.value);
 		if (row?.suppressed) continue;
-		const index = builtins.length;
 		builtins.push({
 			id: row?.id ?? null,
 			kind,
@@ -1581,7 +1581,7 @@ function mergeCategories(kind, custom) {
 			parentSlug: row?.parentSlug ?? item.parent ?? null,
 			builtin: true,
 			archived: Boolean(row?.archived),
-			sortOrder: row?.sortOrder && row.sortOrder !== 0 ? row.sortOrder : index + 1
+			sortOrder: row?.sortOrder ?? 0
 		});
 	}
 	const seen = new Set((KINDS[kind].categories ?? []).map((item) => item.value));

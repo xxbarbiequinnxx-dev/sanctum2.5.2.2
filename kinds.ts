@@ -13,11 +13,11 @@ export type Kind =
   | "journal"
   | "note"
   | "catalog"
-  | "wishlist"
   | "talk"
   | "roleplay"
   | "challenge"
-  | "playbook";
+  | "playbook"
+  | "calendar";
 
 export type FieldSpec = {
   key: string;
@@ -64,6 +64,26 @@ export const TASK_STATUSES = [
 ];
 
 export const KINDS: Record<Kind, KindConfig> = {
+  calendar: {
+    kind: "calendar",
+    path: "/house",
+    title: "Calendar",
+    kicker: "The date",
+    blurb: "Shared day entries both of you can add and edit. They appear on Home reminders when the date is today.",
+    addLabel: "New calendar entry",
+    emptyTitle: "Nothing on this day",
+    emptyBody: "Add a shared note, appointment, or reminder for this date.",
+    layout: "list",
+    assignable: true,
+    reminders: true,
+    statuses: [
+      { value: "open", label: "Open" },
+      { value: "done", label: "Done" },
+    ],
+    fields: [
+      { key: "body", label: "Notes", type: "textarea", placeholder: "What happens this day.", store: "column" },
+    ],
+  },
   task: {
     kind: "task",
     path: "/tasks",
@@ -284,7 +304,7 @@ export const KINDS: Record<Kind, KindConfig> = {
     path: "/catalog",
     title: "Catalogue",
     kicker: "The shelf",
-    blurb: "Toys, outfits, accessories, restraints, furniture, and spaces — with maker, cost, and a link.",
+    blurb: "Toys, outfits, accessories, restraints, furniture, and spaces.",
     addLabel: "New item",
     emptyTitle: "The catalogue is empty",
     emptyBody: "Photograph a toy, an outfit, a restraint, a piece of furniture, or a space.",
@@ -305,43 +325,9 @@ export const KINDS: Record<Kind, KindConfig> = {
     fields: [
       { key: "category", label: "Kind", type: "select", store: "column" },
       { key: "brand", label: "Maker / brand", type: "text", placeholder: "Optional", store: "meta" },
-      { key: "price", label: "Cost", type: "text", placeholder: "What it costs", store: "meta" },
-      { key: "link", label: "Link", type: "text", placeholder: "Where to find it", store: "meta" },
       { key: "body", label: "Notes", type: "textarea", placeholder: "Use, care, limits, favourites.", store: "column" },
       { key: "intensity", label: "Intensity", type: "intensity", store: "column" },
     ],
-  },
-  wishlist: {
-    kind: "wishlist",
-    path: "/wishlist",
-    title: "Wish List",
-    kicker: "The wanting",
-    blurb: "Lingerie, toys, outfits, and accessories you want — photograph them, name a maker, a cost, and a link.",
-    addLabel: "New wish",
-    emptyTitle: "The wish list is empty",
-    emptyBody: "Add lingerie, a toy, an outfit, or an accessory you want.",
-    layout: "grid",
-    categories: [
-      { value: "lingerie", label: "Lingerie" },
-      { value: "toy", label: "Toys" },
-      { value: "outfit", label: "Outfits" },
-      { value: "accessory", label: "Accessories" },
-    ],
-    statuses: [
-      { value: "open", label: "Wanted" },
-      { value: "done", label: "Received" },
-      { value: "archived", label: "Passed" },
-    ],
-    fields: [
-      { key: "category", label: "Kind", type: "select", store: "column" },
-      { key: "brand", label: "Maker / shop", type: "text", placeholder: "Optional", store: "meta" },
-      { key: "price", label: "Cost", type: "text", placeholder: "What it costs", store: "meta" },
-      { key: "link", label: "Link", type: "text", placeholder: "Where to find it", store: "meta" },
-      { key: "body", label: "Notes", type: "textarea", placeholder: "Size, colour, why you want it, who it is for.", store: "column" },
-      { key: "intensity", label: "Want", type: "intensity", store: "column" },
-    ],
-    completeLabel: "Mark received",
-    reopenLabel: "Want again",
   },
   talk: {
     kind: "talk",
